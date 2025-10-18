@@ -1,38 +1,28 @@
-﻿import Providers from "./providers";
-import Header from "@/components/Header/Header";
-import "./globals.css";
+﻿import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import Providers from './providers';
+import AuthProvider from '@/components/AuthProvider/AuthProvider';
+import './globals.css';
 
-export const metadata = {
-  title: "NoteHub",
-  description: "Your personal note taking app",
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'NoteHub',
+  description: 'Your personal note management system',
 };
-
-interface RootLayoutProps {
-  children: React.ReactNode;
-  modal?: React.ReactNode;
-}
 
 export default function RootLayout({
   children,
-  modal,
-}: RootLayoutProps) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body>
+      <body className={inter.className}>
         <Providers>
-          <Header />
-          <main>
+          <AuthProvider>
             {children}
-          </main>
-          <footer style={{
-            padding: "2rem",
-            textAlign: "center",
-            borderTop: "1px solid #eee",
-            marginTop: "auto"
-          }}>
-            <p>© 2024 NoteHub. All rights reserved.</p>
-          </footer>
-          {modal}
+          </AuthProvider>
         </Providers>
       </body>
     </html>

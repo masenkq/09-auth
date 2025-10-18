@@ -1,0 +1,20 @@
+export interface User {
+  email: string;
+  username: string;
+  avatar: string;
+}
+export interface LoginData {
+  email: string;
+  password: string;
+}
+
+export interface RegisterData {
+  email: string;
+  password: string;
+  username?: string;
+}
+
+export interface UpdateUserData {
+  username?: string;
+  avatar?: string;
+}

@@ -1,66 +1,83 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { CreateNoteData } from '@/types/note';
+import css from './NoteForm.module.css';
 
 interface NoteFormProps {
   onSubmit: (data: CreateNoteData) => void;
-  isLoading?: boolean;
+  isLoading?: boolean; // Додаємо опціональний проп isLoading
 }
 
-export default function NoteForm({ onSubmit, isLoading = false }: NoteFormProps) {
+const NoteForm: React.FC<NoteFormProps> = ({ onSubmit, isLoading = false }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [tag, setTag] = useState('general');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ title, content });
+    onSubmit({ title, content, tag });
+    // Очистити форму після відправки
+    setTitle('');
+    setContent('');
+    setTag('general');
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <div>
-        <label htmlFor="title" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-          Title
-        </label>
+    <form className={css.form} onSubmit={handleSubmit}>
+      <h3>Create New Note</h3>
+      
+      <div className={css.formGroup}>
+        <label htmlFor="title">Title</label>
         <input
-          type="text"
           id="title"
+          type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px' }}
+          className={css.input}
           required
+          disabled={isLoading}
         />
       </div>
-      
-      <div>
-        <label htmlFor="content" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-          Content
-        </label>
+
+      <div className={css.formGroup}>
+        <label htmlFor="content">Content</label>
         <textarea
           id="content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px', minHeight: '150px' }}
+          className={css.textarea}
           required
+          disabled={isLoading}
         />
       </div>
-      
+
+      <div className={css.formGroup}>
+        <label htmlFor="tag">Tag</label>
+        <select
+          id="tag"
+          value={tag}
+          onChange={(e) => setTag(e.target.value)}
+          className={css.select}
+          disabled={isLoading}
+        >
+          <option value="general">General</option>
+          <option value="work">Work</option>
+          <option value="personal">Personal</option>
+          <option value="ideas">Ideas</option>
+          <option value="reminders">Reminders</option>
+        </select>
+      </div>
+
       <button 
         type="submit" 
+        className={css.submitButton}
         disabled={isLoading}
-        style={{ 
-          background: '#007acc', 
-          color: 'white', 
-          border: 'none', 
-          padding: '0.75rem 1.5rem', 
-          borderRadius: '4px',
-          cursor: isLoading ? 'not-allowed' : 'pointer',
-          opacity: isLoading ? 0.6 : 1
-        }}
       >
         {isLoading ? 'Creating...' : 'Create Note'}
       </button>
     </form>
   );
-}
+};
+
+export default NoteForm;
