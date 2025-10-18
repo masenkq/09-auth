@@ -1,35 +1,19 @@
-import { NextResponse } from 'next/server';
-import { api } from '../../api';
-import { cookies } from 'next/headers';
-import { isAxiosError } from 'axios';
-import { logErrorResponse } from '../../_utils/utils';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-
-    const accessToken = cookieStore.get('accessToken')?.value;
-    const refreshToken = cookieStore.get('refreshToken')?.value;
-
-    await api.post('auth/logout', null, {
-      headers: {
-        Cookie: `accessToken=${accessToken}; refreshToken=${refreshToken}`,
-      },
+    const response = await fetch('https://notehub-api.goit.study/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
     });
 
-    cookieStore.delete('accessToken');
-    cookieStore.delete('refreshToken');
-
-    return NextResponse.json({ message: 'Logged out successfully' }, { status: 200 });
+    const result = NextResponse.json({ message: 'Logged out successfully' });
+    
+    // Видаляємо cookies
+    result.cookies.delete('auth-token');
+    
+    return result;
   } catch (error) {
-    if (isAxiosError(error)) {
-      logErrorResponse(error.response?.data);
-      return NextResponse.json(
-        { error: error.message, response: error.response?.data },
-        { status: error.status }
-      );
-    }
-    logErrorResponse({ message: (error as Error).message });
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: 'Logout failed' }, { status: 500 });
   }
 }
