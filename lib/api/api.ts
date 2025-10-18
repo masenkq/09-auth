@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { Note, CreateNoteData } from '@/types/note'; // Тільки ті типи, які існують
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+// Для клієнтських запитів використовуємо безпосередньо бекенд API
+const API_BASE_URL = 'https://notehub-api.goit.study';
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

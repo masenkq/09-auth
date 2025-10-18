@@ -28,7 +28,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
           setUser(userData);
         } else {
           clearAuth();
-          // Якщо користувач не авторизований і на приватній сторінці - редірект
           if (isPrivateRoute) {
             router.push('/sign-in');
           }
@@ -36,7 +35,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       } catch (error) {
         console.error('Auth check failed:', error);
         clearAuth();
-        if (isPrivateRoute) {
+        // Не редіректимо на помилку мережі, щоб не блокувати користувача
+        if (isPrivateRoute && error.message !== 'Network Error') {
           router.push('/sign-in');
         }
       } finally {
@@ -44,10 +44,14 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       }
     };
 
-    verifyAuth();
+    // Перевіряємо авторизацію тільки на приватних маршрутах
+    if (isPrivateRoute) {
+      verifyAuth();
+    } else {
+      setIsChecking(false);
+    }
   }, [pathname, setUser, clearAuth, isPrivateRoute, router]);
 
-  // Показуємо лоадер під час перевірки авторизації на приватних маршрутах
   if (isChecking && isPrivateRoute) {
     return (
       <div className={css.loaderContainer}>
@@ -56,7 +60,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     );
   }
 
-  // Якщо користувач не авторизований і на приватному маршруті - не показуємо контент
   if (!isAuthenticated && isPrivateRoute) {
     return null;
   }

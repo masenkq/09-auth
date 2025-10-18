@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { logout, checkSession } from '@/lib/api/clientApi';
@@ -8,6 +8,7 @@ import { useAuthStore } from '@/lib/store/authStore';
 import css from './AuthNavigation.module.css';
 
 export default function AuthNavigation() {
+  const [isLoading, setIsLoading] = useState(true);
   const { user, isAuthenticated, setUser, clearAuth } = useAuthStore();
   const router = useRouter();
 
@@ -19,7 +20,13 @@ export default function AuthNavigation() {
           setUser(userData);
         }
       } catch (error) {
-        clearAuth();
+        console.error('Auth check failed:', error);
+        // Ігноруємо помилки мережі для навігації
+        if (error.message !== 'Network Error') {
+          clearAuth();
+        }
+      } finally {
+        setIsLoading(false);
       }
     };
     
@@ -33,8 +40,19 @@ export default function AuthNavigation() {
       router.push('/sign-in');
     } catch (error) {
       console.error('Logout failed:', error);
+      // Навіть при помилці виходимо локально
+      clearAuth();
+      router.push('/sign-in');
     }
   };
+
+  if (isLoading) {
+    return (
+      <li className={css.navigationItem}>
+        <span className={css.loading}>Loading...</span>
+      </li>
+    );
+  }
 
   if (isAuthenticated && user) {
     return (

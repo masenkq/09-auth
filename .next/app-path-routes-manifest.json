@@ -1,12 +1,12 @@
 {
   "/_not-found/page": "/_not-found",
   "/page": "/",
-  "/(auth routes)/sign-in/page": "/sign-in",
   "/notes/create/page": "/notes/create",
-  "/(private routes)/profile/edit/page": "/profile/edit",
-  "/(private routes)/notes/page": "/notes",
-  "/notes/[id]/page": "/notes/[id]",
+  "/(auth routes)/sign-in/page": "/sign-in",
   "/(auth routes)/sign-up/page": "/sign-up",
+  "/(private routes)/profile/edit/page": "/profile/edit",
+  "/notes/[id]/page": "/notes/[id]",
+  "/(private routes)/notes/page": "/notes",
   "/(private routes)/profile/page": "/profile",
   "/notes/filter/[...slug]/page": "/notes/filter/[...slug]"
 }
